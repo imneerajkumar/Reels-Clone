@@ -1,23 +1,40 @@
-import logo from './logo.svg';
+import React, { useEffect, useState } from "react";
 import './App.css';
+import VideoCard from "./VideoCard";
+import db from "./firebase";
 
 function App() {
+  const [reels, setReels] = useState([]);
+
+  useEffect(() => {
+    db.collection("reels").onSnapshot(snapshot => (
+      setReels(snapshot.docs.map(doc => doc.data()))
+    ))
+  }, []);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className="app">
+      <div className="app__top"> 
+        <img 
+          className="app__logo"
+          src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Instagram_logo_2016.svg/640px-Instagram_logo_2016.svg.png"
+          alt="Instagram"
+        />
+        <h1>Reels</h1>
+      </div>
+
+      <div className="app__videos">
+        {reels.map(({ channel, avatarSrc, song, url, likes, comments }) => (
+          <VideoCard 
+            channel={channel}
+            avatarSrc={avatarSrc}
+            song={song}
+            url={url}
+            likes={likes}
+            comments={comments}
+          />
+        ))}
+      </div>
     </div>
   );
 }
